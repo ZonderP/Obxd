@@ -13,13 +13,20 @@ It contains the basic startup code for a Juce application.
 #include <xmmintrin.h>
 //==============================================================================
 #define S(T) (juce::String(T))
-ObxdAudioProcessor::ObxdAudioProcessor() : bindings(),programs()
+ObxdAudioProcessor::ObxdAudioProcessor() : bindings(),programs(),hostIsEnergyXT(false)
 {
 	midiControlledParamSet = false;
 	lastMovedController = 0;
 	lastUsedParameter = 0;
 	synth = new SynthEngine();
 	synth->setSampleRate(44100);
+
+    const String hostPath(PluginHostType::getHostPath());
+    const String hostFilename(File(hostPath).getFileName());
+    if (hostFilename.containsIgnoreCase("energyXT")) {
+        hostIsEnergyXT = true;
+    }
+
 	initAllParams();
 }
 
@@ -668,7 +675,10 @@ void ObxdAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 			bindings.controllers[i] = xmlState->getIntAttribute(String(i),0);
 		}
 	setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"),0));
-	delete xmlState;
+    if (hostIsEnergyXT) {
+        dispatchPendingMessages();
+    }
+    delete xmlState;
 }
 void  ObxdAudioProcessor::setCurrentProgramStateInformation(const void* data,int sizeInBytes)
 {

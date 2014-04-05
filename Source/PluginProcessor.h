@@ -108,7 +108,9 @@ public:
 
 private:
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObxdAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ObxdAudioProcessor)
+
+    bool hostIsEnergyXT;
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
